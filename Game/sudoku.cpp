@@ -1,4 +1,5 @@
 #include "sudoku.h"
+#include <QDebug>
 using namespace std;
 
 Sudoku::Sudoku()
@@ -62,7 +63,6 @@ bool Sudoku::checkUnity(int arr[])
     //count
     for (int i = 0; i < 9; ++i)
     {
-
         ++arr_unity[arr[i] - 1];
     }
 
@@ -73,8 +73,10 @@ bool Sudoku::checkUnity(int arr[])
         {
             return false;
         }
-        return true;
+
     }
+
+    return true;
 }
 
 bool Sudoku::isCorrect()
@@ -140,6 +142,7 @@ bool Sudoku::solve(Sudoku question, Sudoku & answer)
 
     int firstZero;
     firstZero = question.getFirstZeroIndex();
+    qDebug() << "location:" << firstZero;
 
     if (firstZero == -1)
     {
@@ -159,15 +162,21 @@ bool Sudoku::solve(Sudoku question, Sudoku & answer)
     {
         //find possible number, just try them
         vector<int> v = find(question, firstZero);
+        qDebug() << "rest:" << v;
 
-        for (int num = 0; num <= v.size(); ++num)
+
+        for (int num = 0; num < v.size(); ++num)
         {
             question.setElement(firstZero, v[num]);
 
+            qDebug() << "input:" << v[num];
             if (solve(question, answer))
             {
                 return true;
             }
+
+
+
         }
 
         return false;
@@ -180,21 +189,30 @@ bool Sudoku::create(Sudoku & question, Sudoku & question_cansolve)
 {
     //create a random array
     //wash card algorithm
-    int poker[9];
+    int poker[9] = {0};
     for (int i = 0; i < 9; i++)
     {
         poker[i] = i+1;
     }
 
-    int temp;
+
+
+    int temp = 0;
     for (int i = 0; i < 9; i++)
     {
-        srand(time(NULL));
-        int ran = rand() % 9 + 1;
+        //srand(time(NULL));
+        int ran = rand() % 9;
         temp = poker[i];
         poker[i] = poker[ran];
         poker[ran] = temp;
     }
+
+    for (int i = 0; i < 9; i++)
+    {
+        qDebug() << poker[i];
+    }
+
+
 
     /*line1 : original
       line2 : shift 3 of line1
@@ -244,11 +262,15 @@ bool Sudoku::create(Sudoku & question, Sudoku & question_cansolve)
     srand(time(NULL));
     int r;
 
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 50; i++)
     {
         r = rand() % 81 + 1;
         question_cansolve.setElement(r, 0);
     }
+
+
+
+    return true;
 }
 
 //find the number which is not used before

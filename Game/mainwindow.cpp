@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "sudoku.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -83,7 +84,9 @@ void MainWindow::get(Sudoku & su)
     for (int i = 0; i < 81; ++i)
     {
         QString element = ui->tableWidget->item(i/9, i%9)->text();
+
         su.setElement(i, element.toInt());
+
     }
 }
 
@@ -193,8 +196,9 @@ void MainWindow::on_pushButton_3_clicked()
 
     get(ques);
 
+    timer->stop();
 
-    if (check_error(ques) && ques.solve(ques, ans))
+    if (ques.solve(ques, ans))
     {
         set(ans);
         QMessageBox::about(this, "Finish", "Congradulation!\nYou solve the sudoku.");
@@ -288,6 +292,13 @@ void MainWindow::on_pushButton_4_clicked()
     timehr = 0;
     QString s = " " + QString::number(timehr) + " : " + QString::number(timemin) + " : " + QString::number(timesec);
     ui->label_3->setText(s);
+
+    for (int i = 0; i < 81; i++)
+    {
+        QTableWidgetItem *item = new QTableWidgetItem(QString(""));
+
+        ui->tableWidget->setItem(i/9, i%9, item);
+    }
 }
 
 //check every element, then mark the wrong ones
